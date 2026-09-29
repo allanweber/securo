@@ -133,6 +133,16 @@ services:
       - backend
     restart: unless-stopped
 
+  cloudflared:
+    image: cloudflare/cloudflared:${CLOUDFLARED_VERSION:-2024.12.2}
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    environment:
+      # Token of the named tunnel created in the Cloudflare Zero Trust dashboard.
+      - TUNNEL_TOKEN=${TUNNEL_TOKEN}
+    depends_on:
+      - frontend
+
   celery-worker:
     <<: *backend-base
     # Limit to 2 workers to save RAM (default = number of CPUs).
